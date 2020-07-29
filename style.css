@@ -10,12 +10,21 @@ body {
 	flex-direction: column;
 }
 
+#button {
+	background-color: rgba(102, 102, 102, 0.308);
+	border-color: #000;
+	border-radius: 5px;
+	padding: 5px;
+	margin-top: 25px;
+}
+
 .grid {
 	border: 1px solid;
 	display: flex;
 	flex-wrap: wrap;
 	height: 180px;
 	width: 180px;
+	border-radius: 5px;
 }
 
 .grid div {
