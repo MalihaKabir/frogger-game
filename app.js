@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
-	const squares = document.querySelectorAll('.grid div');
-	const timeLeft = document.querySelector('#time-left');
 	const startBtn = document.querySelector('#button');
+	const timeLeft = document.querySelector('#time-left');
 	const resultDisplay = document.querySelector('#result');
-	const carsLeft = document.querySelectorAll('.car-left');
-	const carsRight = document.querySelectorAll('.car-right');
+	const squares = document.querySelectorAll('.grid div');
 	const logsLeft = document.querySelectorAll('.log-left');
 	const logsRight = document.querySelectorAll('.log-right');
-	// const endingBlock = document.querySelector('.ending-block');
-	const indexOfendingBlock = 4;
+	const carsLeft = document.querySelectorAll('.car-left');
+	const carsRight = document.querySelectorAll('.car-right');
+	const indexOfEndingBlock = 4;
 	const widthOfWholeGrid = 9;
 	let currentIndex = 76;
+	let currentTime = 20;
 	let timerId = null;
 
 	// render Frog on starting block
@@ -21,31 +21,27 @@ document.addEventListener('DOMContentLoaded', () => {
 		squares[currentIndex].classList.remove('frog');
 
 		// using events of keyCode, decide which way the Frog is gonna go
-		switch (event.key) {
+		switch (event.keyCode) {
 			case 37:
-				if (currentIndex % widthOfWholeGrid !== 0) {
-					currentIndex -= 1; // goes left
-				}
+				if (currentIndex % widthOfWholeGrid !== 0) currentIndex -= 1; // goes left
 				break;
 			case 38:
-				if (currentIndex - widthOfWholeGrid >= 0) {
-					currentIndex -= widthOfWholeGrid; // goes top
-				}
+				if (currentIndex - widthOfWholeGrid >= 0) currentIndex -= widthOfWholeGrid; // goes top
 				break;
 			case 39:
-				if (currentIndex % widthOfWholeGrid < widthOfWholeGrid - 1) {
-					currentIndex += 1; // goes right
-				}
+				if (currentIndex % widthOfWholeGrid < widthOfWholeGrid - 1) currentIndex += 1; // goes right
 				break;
 			case 40:
 				if (currentIndex + widthOfWholeGrid < widthOfWholeGrid * widthOfWholeGrid) {
-					currentIndex -= widthOfWholeGrid;
+					currentIndex += widthOfWholeGrid; // goes down
 				}
+
 				break;
 		}
+
 		squares[currentIndex].classList.add('frog');
 
-		// while moving, decide if lose or win. declare them through new individual funcions
+		// while moving or on each key press, check if the frog has done anything that would result winning or losing. declare them through new individual funcions
 		lose();
 		win();
 	}
@@ -80,28 +76,28 @@ document.addEventListener('DOMContentLoaded', () => {
 	// moves car to the right
 	function moveCarToRight (carRight) {
 		switch (true) {
-			case carsRight.classList.contains('c1'):
-				carsRight.classList.remove('c1');
-				carsRight.classList.add('c3');
+			case carRight.classList.contains('c1'):
+				carRight.classList.remove('c1');
+				carRight.classList.add('c3');
 				break;
-			case carsRight.classList.contains('c2'):
-				carsRight.classList.remove('c2');
-				carsRight.classList.add('c1');
+			case carRight.classList.contains('c2'):
+				carRight.classList.remove('c2');
+				carRight.classList.add('c1');
 				break;
-			case carsRight.classList.contains('c3'):
-				carsRight.classList.remove('c3');
-				carsRight.classList.add('c2');
+			case carRight.classList.contains('c3'):
+				carRight.classList.remove('c3');
+				carRight.classList.add('c2');
 				break;
 		}
 	}
 
 	// moves Logs auto
 	function moveLogsAuto () {
-		logsLeft.map((logLeft) => moveLogToLeft(logLeft));
-		logsRight.map((logRight) => moveLogToRight(logRight));
+		logsLeft.forEach((logLeft) => moveLogToLeft(logLeft));
+		logsRight.forEach((logRight) => moveLogToRight(logRight));
 	}
 
-	// moves logs to right
+	// logs are going to left
 	function moveLogToLeft (logLeft) {
 		switch (true) {
 			case logLeft.classList.contains('l1'):
@@ -127,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	// moves logs to left
+	// moving logs to left
 	function moveLogToRight (logRight) {
 		switch (true) {
 			case logRight.classList.contains('l1'):
@@ -153,14 +149,67 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
+	// moves frog when the frog is on the log that moves to LEFT
+	function moveWithLogLeft () {
+		if (currentIndex >= 27 && currentIndex < 35) {
+			squares[currentIndex].classList.remove('frog');
+			currentIndex += 1;
+			squares[currentIndex].classList.add('frog');
+		}
+	}
+
+	// moves frog when the frog is on the log that moves to RIGHT
+	function moveWithLogRight () {
+		if (currentIndex > 18 && currentIndex <= 27) {
+			squares[currentIndex].classList.remove('frog');
+			currentIndex -= 1;
+			squares[currentIndex].classList.add('frog');
+		}
+	}
+
 	// rules to win the game
 	function win () {
-		if (squares[indexOfendingBlock].classList.contains('ending-block', 'frog')) {
-			resultDisplay.textContent = 'You Won!';
+		if (squares[indexOfEndingBlock].classList.contains('frog')) {
+			resultDisplay.textContent = 'YOU WON!';
 			squares[currentIndex].classList.remove('frog');
 			clearInterval(timerId);
 			document.removeEventListener('keyup', moveFrog);
 		}
 	}
-	// document.addEventListener('keydown', moveFrog);
+
+	// decides how Frogger can lose
+	function lose () {
+		if (
+			currentTime === 0 ||
+			squares[currentIndex].classList.contains('c1') ||
+			squares[currentIndex].classList.contains('l4') ||
+			squares[currentIndex].classList.contains('l5')
+		) {
+			squares[currentIndex].classList.remove('frog');
+			resultDisplay.textContent = 'YOU LOSE';
+			clearInterval(timerId);
+			document.removeEventListener('keyup', moveFrog);
+		}
+	}
+
+	function movePieces () {
+		currentTime--;
+		timeLeft.textContent = currentTime;
+		moveCarsAuto();
+		moveLogsAuto();
+		moveWithLogLeft();
+		moveWithLogRight();
+		// while pieces move, there's a chance to lose. So, call lose() here as well.
+		lose();
+	}
+
+	startBtn.addEventListener('click', () => {
+		// if getting anything on timerId
+		if (timerId) {
+			clearInterval(timerId);
+		} else {
+			timerId = setInterval(movePieces, 1000);
+			document.addEventListener('keyup', moveFrog);
+		}
+	});
 });
