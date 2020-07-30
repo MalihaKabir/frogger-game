@@ -4,7 +4,7 @@ A retro grid-based game in vanilla JavaScript, HTML and CSS
 
 The object of the game is to direct a frog to its home by crossing a busy road as well as navigating a river by jumping on logs.
 
-### Rules of Frogger
+### Rules for the game
 * You will start on your bottom starting block which is purple, or 'starting-block'
 * You have 20 seconds from pressing the start button to get to your top block or 'ending-block' to win the game
 * You will lose if the time runs out
