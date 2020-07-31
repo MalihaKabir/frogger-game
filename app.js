@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (currentIndex + widthOfWholeGrid < widthOfWholeGrid * widthOfWholeGrid) {
 					currentIndex += widthOfWholeGrid; // goes down
 				}
-
 				break;
 		}
 
@@ -149,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	// moves frog when the frog is on the log that moves to LEFT
+	// moves frog when the frog is on the log that moves to RIGHT
 	function moveWithLogLeft () {
 		if (currentIndex >= 27 && currentIndex < 35) {
 			squares[currentIndex].classList.remove('frog');
@@ -158,9 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	// moves frog when the frog is on the log that moves to RIGHT
+	// moves frog when the frog is on the log that moves to LEFT
 	function moveWithLogRight () {
-		if (currentIndex > 18 && currentIndex <= 27) {
+		if (currentIndex > 18 && currentIndex <= 26) {
 			squares[currentIndex].classList.remove('frog');
 			currentIndex -= 1;
 			squares[currentIndex].classList.add('frog');
